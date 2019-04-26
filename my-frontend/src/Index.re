@@ -1,0 +1,3 @@
+ReactDOMRe.renderToElementWithId(<Component/>, "index");
+
+
