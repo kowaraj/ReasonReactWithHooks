@@ -1,0 +1,5 @@
+my-backend/node_modules/
+my-frontend/.bsb.lock
+my-frontend/.merlin
+my-frontend/lib/
+my-frontend/node_modules/
