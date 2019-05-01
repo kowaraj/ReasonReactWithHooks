@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Test = require("./test");
+var Caml_format = require("bs-platform/lib/js/caml_format.js");
 
 function http_req(prim, prim$1) {
   return Test.http_req(prim, prim$1);
@@ -21,57 +22,119 @@ function req(url) {
   return /* () */0;
 }
 
+function handleDoRequest(st) {
+  var r = st[/* url */0][/* protocol */0] + ("://" + (st[/* url */0][/* hostname */1] + (":" + (String(st[/* url */0][/* port */2]) + st[/* url */0][/* page */3]))));
+  console.log("DO-REQUESTING: " + r);
+  return req(r);
+}
+
 function reducer_fun(state, action) {
-  if (action.tag) {
-    return /* record */[/* url : record */[
-              /* hostname */state[/* url */0][/* hostname */0],
-              /* page */action[0]
-            ]];
+  if (typeof action === "number") {
+    handleDoRequest(state);
+    return state;
   } else {
-    return /* record */[/* url : record */[
-              /* hostname */action[0],
-              /* page */state[/* url */0][/* page */1]
-            ]];
+    switch (action.tag | 0) {
+      case 0 : 
+          var init = state[/* url */0];
+          return /* record */[/* url : record */[
+                    /* protocol */action[0],
+                    /* hostname */init[/* hostname */1],
+                    /* port */init[/* port */2],
+                    /* page */init[/* page */3]
+                  ]];
+      case 1 : 
+          var init$1 = state[/* url */0];
+          return /* record */[/* url : record */[
+                    /* protocol */init$1[/* protocol */0],
+                    /* hostname */action[0],
+                    /* port */init$1[/* port */2],
+                    /* page */init$1[/* page */3]
+                  ]];
+      case 2 : 
+          var init$2 = state[/* url */0];
+          return /* record */[/* url : record */[
+                    /* protocol */init$2[/* protocol */0],
+                    /* hostname */init$2[/* hostname */1],
+                    /* port */action[0],
+                    /* page */init$2[/* page */3]
+                  ]];
+      case 3 : 
+          var init$3 = state[/* url */0];
+          return /* record */[/* url : record */[
+                    /* protocol */init$3[/* protocol */0],
+                    /* hostname */init$3[/* hostname */1],
+                    /* port */init$3[/* port */2],
+                    /* page */action[0]
+                  ]];
+      
+    }
   }
 }
 
 function Component(Props) {
   var match = React.useReducer(reducer_fun, /* record */[/* url : record */[
-          /* hostname */"http://ec2-34-246-176-2.eu-west-1.compute.amazonaws.com:3000",
-          /* page */"/test"
+          /* protocol */"http",
+          /* hostname */"localhost",
+          /* port */3000,
+          /* page */"/test1"
         ]]);
   var dispatch = match[1];
   var st = match[0];
   var match$1 = React.useState((function () {
-          return st[/* url */0][/* hostname */0] + st[/* url */0][/* page */1];
+          return st[/* url */0][/* hostname */1] + st[/* url */0][/* page */3];
         }));
   var handleClick = function (_event) {
-    var r = st[/* url */0][/* hostname */0] + st[/* url */0][/* page */1];
+    var r = st[/* url */0][/* protocol */0] + ("://" + (st[/* url */0][/* hostname */1] + (":" + (String(st[/* url */0][/* port */2]) + st[/* url */0][/* page */3]))));
     console.log("REQUESTING: " + r);
     return req(r);
   };
   return React.createElement("div", {
               className: "app"
-            }, React.createElement("p", undefined, "Requested hostname: " + st[/* url */0][/* hostname */0]), React.createElement("input", {
+            }, React.createElement("p", undefined, "Requested protocol: " + st[/* url */0][/* protocol */0]), React.createElement("input", {
                   placeholder: "Write something to do",
                   size: 90,
                   type: "text",
-                  value: st[/* url */0][/* hostname */0],
+                  value: st[/* url */0][/* protocol */0],
+                  onKeyDown: (function (evt) {
+                      if (evt.key === "Enter") {
+                        return Curry._1(dispatch, /* DoRequest */0);
+                      } else {
+                        return 0;
+                      }
+                    }),
+                  onChange: (function (evt) {
+                      return Curry._1(dispatch, /* SetProtocol */Block.__(0, [evt.target.value]));
+                    })
+                }), React.createElement("p", undefined, "Requested hostname: " + st[/* url */0][/* hostname */1]), React.createElement("input", {
+                  placeholder: "Write something to do",
+                  size: 90,
+                  type: "text",
+                  value: st[/* url */0][/* hostname */1],
                   onKeyDown: (function (evt) {
                       return /* () */0;
                     }),
                   onChange: (function (evt) {
-                      return Curry._1(dispatch, /* SetHostname */Block.__(0, [evt.target.value]));
+                      return Curry._1(dispatch, /* SetHostname */Block.__(1, [evt.target.value]));
                     })
-                }), React.createElement("p", undefined, "Requested page: " + st[/* url */0][/* page */1]), React.createElement("input", {
+                }), React.createElement("p", undefined, "Requested port: " + String(st[/* url */0][/* port */2])), React.createElement("input", {
                   placeholder: "Write something to do",
                   type: "text",
-                  value: st[/* url */0][/* page */1],
+                  value: String(st[/* url */0][/* port */2]),
                   onKeyDown: (function (evt) {
                       return /* () */0;
                     }),
                   onChange: (function (evt) {
-                      return Curry._1(dispatch, /* SetPage */Block.__(1, [evt.target.value]));
+                      return Curry._1(dispatch, /* SetPort */Block.__(2, [Caml_format.caml_int_of_string(evt.target.value)]));
+                    })
+                }), React.createElement("p", undefined, "Requested page: " + st[/* url */0][/* page */3]), React.createElement("input", {
+                  placeholder: "Write something to do",
+                  type: "text",
+                  value: st[/* url */0][/* page */3],
+                  onKeyDown: (function (evt) {
+                      return /* () */0;
+                    }),
+                  onChange: (function (evt) {
+                      return Curry._1(dispatch, /* SetPage */Block.__(3, [evt.target.value]));
                     })
                 }), React.createElement("p", undefined, "Requested URL is: " + match$1[0]), React.createElement("button", {
                   onClick: handleClick
@@ -83,6 +146,7 @@ var make = Component;
 exports.http_req = http_req;
 exports.js_callback = js_callback;
 exports.req = req;
+exports.handleDoRequest = handleDoRequest;
 exports.reducer_fun = reducer_fun;
 exports.make = make;
 /* react Not a pure module */
