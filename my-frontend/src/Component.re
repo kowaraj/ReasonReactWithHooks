@@ -1,13 +1,5 @@
 [@bs.module "./test"] [@bs.val] external http_req : (string, (string => unit)) => string = "";
 
-let js_callback = msg => {
-    Js.log("RETURN from the callback")
-    Js.log(msg)
-};
-
-let req = (url) => {
-  http_req(url, js_callback) |> ignore
-};
 
 type req_address = {
   protocol: string,
@@ -17,7 +9,11 @@ type req_address = {
 };
 
 type state = {
-  url: req_address
+  url: req_address,
+};
+
+type state_2 = {
+  req_response: string
 };
 
 type action =
@@ -26,41 +22,69 @@ type action =
   | SetPort(int)
   | SetPage(string)
   | DoRequest
+  | SetResponse(string)
 ;
 
-let handleDoRequest = (st) => {
-    let r = st.url.protocol ++ "://" ++ st.url.hostname ++ ":" ++ string_of_int(st.url.port) ++ st.url.page;
-    Js.log("DO-REQUESTING: "++r);
-    req(r)
-};
-  
-let reducer_fun = (state, action) => {
-  switch action {
-    | SetProtocol(proto) => { url: {...state.url, protocol: proto}}
-    | SetHostname(hn) =>    { url: {...state.url, hostname: hn}}
-    | SetPort(port) =>      { url: {...state.url, port: port}}
-    | SetPage(p) =>         { url: {...state.url, page: p}}
-    | DoRequest => {handleDoRequest(state); state}
-  }
-};
 
 
 //http://ec2-34-246-176-2.eu-west-1.compute.amazonaws.com:3000/test1",
 [@react.component]
-let make = () => {
+let make = () => 
+{
+  let reducer_fun_2 = (state, action) => {
+    switch action {
+    | SetResponse(resp) =>  { ...state, req_response: resp}
+    }
+  };
+
+  let (st_2, dispatch_2) = React.useReducer(
+    reducer_fun_2,
+    {req_response: "nothing has been requested"}
+  );
+
+  let js_callback = msg => {
+    Js.log("RETURN from the callback");
+    Js.log(msg);
+    dispatch_2(SetResponse(msg))
+      
+  };
+
+  let req = (url) => {
+    http_req(url, js_callback) |> ignore
+  };
+
+  let handleDoRequest = (st) => {
+    let r = st.url.protocol ++ "://" ++ st.url.hostname ++ ":" ++ string_of_int(st.url.port) ++ st.url.page;
+    Js.log("DO-REQUESTING: "++r);
+    req(r)
+  };
+
+  let reducer_fun = (state, action) => {
+    switch action {
+    | SetProtocol(proto) => { ...state, url: {...state.url, protocol: proto}}
+    | SetHostname(hn) =>    { ...state, url: {...state.url, hostname: hn}}
+    | SetPort(port) =>      { ...state, url: {...state.url, port: port}}
+    | SetPage(p) =>         { ...state, url: {...state.url, page: p}}
+    | DoRequest =>          { handleDoRequest(state); state }
+    }
+  };
+
   let (st, dispatch) = React.useReducer(
     reducer_fun,
     { url:
       { protocol: "http", 
         hostname: "localhost", //ec2-34-246-176-2.eu-west-1.compute.amazonaws.com",
         port: 3000, 
-        page: "/test1"  }});
+        page: "/test"  }
+  });
 
-  let (req_url, setReqUrl) = React.useState( ()=> st.url.hostname ++ st.url.page);
+  
 
-  let handleClick = (_event) => {
+  /* let (req_url, setReqUrl) = React.useState( ()=> st.url.hostname ++ st.url.page); */
+
+  let handleButtonClick = (_event) => {
     let r = st.url.protocol ++ "://" ++ st.url.hostname ++ ":" ++ string_of_int(st.url.port) ++ st.url.page;
-    Js.log("REQUESTING: "++r);
+    Js.log("BUTTON REQUESTING: "++r);
     req(r)
   };
 
@@ -68,9 +92,11 @@ let make = () => {
 
   let dispatchOnEnter = (evt) =>  { 
     if (ReactEvent.Keyboard.key(evt) == "Enter") {
-      dispatch(DoRequest) }};
+      dispatch(DoRequest);
+    }};
 
-<div className="app">
+
+  <div className="app">
 
       // PROTOCOL INPUT
       <p> {ReasonReact.string("Requested protocol: "++ st.url.protocol)} </p>
@@ -115,8 +141,14 @@ let make = () => {
       />
 
       // RESULTING URL
-      <p> {React.string( "Requested URL is: " ++ req_url)} </p>
-      <button onClick={handleClick} > (ReasonReact.string("HTTP Request"))  </button>
+
+      <p style=(ReactDOMRe.Style.make(~fontWeight="bold", ()))> { 
+            let r = st.url.protocol ++ "://" ++ st.url.hostname ++ ":" ++ string_of_int(st.url.port) ++ st.url.page;
+            React.string( "Request URL:   " ++ r) }</p>
+      <button onClick={handleButtonClick} > (ReasonReact.string("HTTP Request"))  </button>
+      <p> { React.string( "Response to the HTTP request is: ") } </p>
+      <p style=(ReactDOMRe.Style.make(~backgroundColor="lightGrey", ()))> { 
+        React.string( "\n " ++ st_2.req_response)} </p>
   </div>
 };
 
