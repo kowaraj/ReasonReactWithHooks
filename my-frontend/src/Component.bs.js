@@ -88,6 +88,13 @@ function Component(Props) {
     console.log("REQUESTING: " + r);
     return req(r);
   };
+  var dispatchOnEnter = function (evt) {
+    if (evt.key === "Enter") {
+      return Curry._1(dispatch, /* DoRequest */0);
+    } else {
+      return 0;
+    }
+  };
   return React.createElement("div", {
               className: "app"
             }, React.createElement("p", undefined, "Requested protocol: " + st[/* url */0][/* protocol */0]), React.createElement("input", {
@@ -95,13 +102,7 @@ function Component(Props) {
                   size: 90,
                   type: "text",
                   value: st[/* url */0][/* protocol */0],
-                  onKeyDown: (function (evt) {
-                      if (evt.key === "Enter") {
-                        return Curry._1(dispatch, /* DoRequest */0);
-                      } else {
-                        return 0;
-                      }
-                    }),
+                  onKeyDown: dispatchOnEnter,
                   onChange: (function (evt) {
                       return Curry._1(dispatch, /* SetProtocol */Block.__(0, [evt.target.value]));
                     })
@@ -110,9 +111,7 @@ function Component(Props) {
                   size: 90,
                   type: "text",
                   value: st[/* url */0][/* hostname */1],
-                  onKeyDown: (function (evt) {
-                      return /* () */0;
-                    }),
+                  onKeyDown: dispatchOnEnter,
                   onChange: (function (evt) {
                       return Curry._1(dispatch, /* SetHostname */Block.__(1, [evt.target.value]));
                     })
@@ -120,9 +119,7 @@ function Component(Props) {
                   placeholder: "Write something to do",
                   type: "text",
                   value: String(st[/* url */0][/* port */2]),
-                  onKeyDown: (function (evt) {
-                      return /* () */0;
-                    }),
+                  onKeyDown: dispatchOnEnter,
                   onChange: (function (evt) {
                       return Curry._1(dispatch, /* SetPort */Block.__(2, [Caml_format.caml_int_of_string(evt.target.value)]));
                     })
@@ -130,9 +127,7 @@ function Component(Props) {
                   placeholder: "Write something to do",
                   type: "text",
                   value: st[/* url */0][/* page */3],
-                  onKeyDown: (function (evt) {
-                      return /* () */0;
-                    }),
+                  onKeyDown: dispatchOnEnter,
                   onChange: (function (evt) {
                       return Curry._1(dispatch, /* SetPage */Block.__(3, [evt.target.value]));
                     })

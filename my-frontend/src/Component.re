@@ -66,7 +66,11 @@ let make = () => {
 
   let valueFromEvent = (evt): string => evt->ReactEvent.Form.target##value;
 
-  <div className="app">
+  let dispatchOnEnter = (evt) =>  { 
+    if (ReactEvent.Keyboard.key(evt) == "Enter") {
+      dispatch(DoRequest) }};
+
+<div className="app">
 
       // PROTOCOL INPUT
       <p> {ReasonReact.string("Requested protocol: "++ st.url.protocol)} </p>
@@ -76,10 +80,7 @@ let make = () => {
           type_="text"
           placeholder="Write something to do"
           onChange=( (evt) =>  { dispatch(SetProtocol(valueFromEvent(evt))) })
-          onKeyDown=( (evt) =>  { 
-            if (ReactEvent.Keyboard.key(evt) == "Enter") {
-              dispatch(DoRequest) }})
-
+          onKeyDown=dispatchOnEnter
       />
 
       // HOSTNAME INPUT
@@ -90,7 +91,7 @@ let make = () => {
           type_="text"
           placeholder="Write something to do"
           onChange=( (evt) =>  { dispatch(SetHostname(valueFromEvent(evt))) })
-          onKeyDown=( (evt) =>  { () })
+          onKeyDown=dispatchOnEnter
       />
 
       // PORT INPUT
@@ -100,7 +101,7 @@ let make = () => {
           type_="text"
           placeholder="Write something to do"
           onChange=( (evt) =>  { dispatch(SetPort(int_of_string(valueFromEvent(evt)))) })
-          onKeyDown=( (evt) =>  { () })
+          onKeyDown=dispatchOnEnter
       />
 
       // PAGE INPUT
@@ -110,7 +111,7 @@ let make = () => {
           type_="text"
           placeholder="Write something to do"
           onChange=( (evt) =>  { dispatch(SetPage(valueFromEvent(evt))) })
-          onKeyDown=( (evt) =>  { () })
+          onKeyDown=dispatchOnEnter
       />
 
       // RESULTING URL
