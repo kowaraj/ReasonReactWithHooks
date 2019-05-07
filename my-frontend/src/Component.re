@@ -22,18 +22,21 @@ type action =
   | SetPort(int)
   | SetPage(string)
   | DoRequest
-  | SetResponse(string)
 ;
 
+type action_2 =
+  | SetResponse(string)
+;
 
 
 //http://ec2-34-246-176-2.eu-west-1.compute.amazonaws.com:3000/test1",
 [@react.component]
 let make = () => 
 {
-  let reducer_fun_2 = (state, action) => {
+
+  let reducer_fun_2 = (_state, action) => {
     switch action {
-    | SetResponse(resp) =>  { ...state, req_response: resp}
+    | SetResponse(resp) =>  {req_response: resp}
     }
   };
 
@@ -61,10 +64,10 @@ let make = () =>
 
   let reducer_fun = (state, action) => {
     switch action {
-    | SetProtocol(proto) => { ...state, url: {...state.url, protocol: proto}}
-    | SetHostname(hn) =>    { ...state, url: {...state.url, hostname: hn}}
-    | SetPort(port) =>      { ...state, url: {...state.url, port: port}}
-    | SetPage(p) =>         { ...state, url: {...state.url, page: p}}
+    | SetProtocol(proto) => { url: {...state.url, protocol: proto}}
+    | SetHostname(hn) =>    { url: {...state.url, hostname: hn}}
+    | SetPort(port) =>      { url: {...state.url, port: port}}
+    | SetPage(p) =>         { url: {...state.url, page: p}}
     | DoRequest =>          { handleDoRequest(state); state }
     }
   };

@@ -6,42 +6,21 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Test = require("./test");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function http_req(prim, prim$1) {
   return Test.http_req(prim, prim$1);
 }
 
 function Component(Props) {
-  var reducer_fun_2 = function (state, action) {
-    if (typeof action === "number") {
-      throw [
-            Caml_builtin_exceptions.match_failure,
-            /* tuple */[
-              "Component.re",
-              34,
-              41
-            ]
-          ];
-    } else if (action.tag === 4) {
-      return /* record */[/* req_response */action[0]];
-    } else {
-      throw [
-            Caml_builtin_exceptions.match_failure,
-            /* tuple */[
-              "Component.re",
-              34,
-              41
-            ]
-          ];
-    }
+  var reducer_fun_2 = function (_state, action) {
+    return /* record */[/* req_response */action[0]];
   };
   var match = React.useReducer(reducer_fun_2, /* record */[/* req_response */"nothing has been requested"]);
   var dispatch_2 = match[1];
   var js_callback = function (msg) {
     console.log("RETURN from the callback");
     console.log(msg);
-    return Curry._1(dispatch_2, /* SetResponse */Block.__(4, [msg]));
+    return Curry._1(dispatch_2, /* SetResponse */[msg]);
   };
   var req = function (url) {
     Test.http_req(url, js_callback);
@@ -90,15 +69,6 @@ function Component(Props) {
                       /* port */init$3[/* port */2],
                       /* page */action[0]
                     ]];
-        case 4 : 
-            throw [
-                  Caml_builtin_exceptions.match_failure,
-                  /* tuple */[
-                    "Component.re",
-                    62,
-                    39
-                  ]
-                ];
         
       }
     }
